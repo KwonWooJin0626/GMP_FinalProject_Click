@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class WeaponAPI : MonoBehaviour
 {
-    [SerializeField] string serverUrl = "http://localhost:3000/generate-weapon";
+    [SerializeField] string serverUrl = "http://localhost:3100/generate-weapon";
     [SerializeField] GameObject playerObject;
 
     InputField promptInput;
@@ -259,6 +259,15 @@ public class WeaponAPI : MonoBehaviour
         Debug.Log("무기 이름: " + data.name);
         Debug.Log("속성: " + data.element);
         Debug.Log("희귀도: " + data.rarity);
+        Debug.Log("구체성 점수: " + data.detailScore);
+        Debug.Log("외관 설명: " + data.visualDescription);
+        Debug.Log("수식어: " + data.modifierName);
+        Debug.Log("특수 효과: " + data.specialEffect);
+        Debug.Log("기본 공격력: " + data.baseAttackPower);
+        Debug.Log("최종 공격력: " + data.attackPower);
+        Debug.Log("최종 공격속도: " + data.attackSpeed);
+        Debug.Log("추가 공격력: " + data.bonusAttackPower);
+        Debug.Log("추가 공격속도: " + data.bonusAttackSpeed);
         Debug.Log("이미지 프롬프트: " + data.imagePrompt);
         Debug.Log("서버가 사용한 프롬프트: " + data.promptUsed);
 
@@ -319,9 +328,11 @@ public class WeaponAPI : MonoBehaviour
         {
             equippedWeaponObject = new GameObject("Generated Weapon");
             equippedWeaponObject.transform.SetParent(playerObject.transform, false);
-            equippedWeaponObject.transform.localPosition = new Vector3(0.7f, 0f, 0f);
-            equippedWeaponObject.transform.localScale = Vector3.one * 0.75f;
         }
+
+        equippedWeaponObject.transform.localPosition = new Vector3(0.55f, -0.05f, 0f);
+        equippedWeaponObject.transform.localRotation = Quaternion.Euler(0f, 0f, -35f);
+        equippedWeaponObject.transform.localScale = Vector3.one * GetEquippedWeaponScale(data.rarity);
 
         SpriteRenderer spriteRenderer = equippedWeaponObject.GetComponent<SpriteRenderer>();
         if (spriteRenderer == null)
@@ -332,6 +343,21 @@ public class WeaponAPI : MonoBehaviour
         spriteRenderer.sprite = weaponSprite;
         spriteRenderer.sortingOrder = 10;
         equippedWeaponObject.name = data.name;
+    }
+
+    float GetEquippedWeaponScale(string rarity)
+    {
+        switch (rarity)
+        {
+            case "Legendary":
+                return 1.05f;
+            case "Epic":
+                return 0.95f;
+            case "Rare":
+                return 0.85f;
+            default:
+                return 0.75f;
+        }
     }
 
     void SetLoadingState(bool isLoading, string message)
